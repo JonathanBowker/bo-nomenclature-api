@@ -3,7 +3,7 @@ name: Deploy GraphQL Explorer
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - "docs/graphql-explorer/**"
       - ".github/workflows/deploy-graphql-explorer.yml"
