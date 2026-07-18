@@ -98,6 +98,10 @@ h3 {
   font-size: 0.98rem;
 }
 
+h4 {
+  margin-top: 0;
+}
+
 .subtle,
 .hint,
 .meta-list dt {
@@ -106,7 +110,8 @@ h3 {
 
 .panel,
 .editor-card,
-.response-card {
+.response-card,
+.reference-card {
   background: var(--panel-2);
   border: 1px solid rgba(21, 32, 29, 0.08);
   border-radius: var(--radius);
@@ -270,6 +275,104 @@ textarea {
   gap: 16px;
 }
 
+.reference-card {
+  padding: 16px;
+}
+
+.reference-topline {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.reference-topline h3 {
+  font-size: 1.35rem;
+}
+
+.kind-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(36, 87, 68, 0.12);
+  color: var(--accent-2);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.reference-layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.reference-block {
+  min-width: 0;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(21, 32, 29, 0.07);
+}
+
+.reference-block h4 {
+  margin: 0 0 10px;
+  font-size: 0.92rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #95512f;
+}
+
+.reference-copy {
+  margin: 0;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.field-list {
+  display: grid;
+  gap: 10px;
+}
+
+.field-item {
+  display: grid;
+  gap: 4px;
+  padding-left: 12px;
+  border-left: 2px solid rgba(213, 100, 39, 0.18);
+}
+
+.field-item-name {
+  font-weight: 700;
+}
+
+.field-item-type {
+  color: #95512f;
+  font-size: 0.82rem;
+}
+
+.field-item-copy,
+.note-list {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.response-meta {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.note-list {
+  padding-left: 18px;
+}
+
 .editor-grid {
   grid-template-columns: 1.2fr 0.8fr;
 }
@@ -303,6 +406,7 @@ textarea {
     grid-template-columns: 1fr;
   }
 
+  .reference-layout,
   .editor-grid,
   .response-grid {
     grid-template-columns: 1fr;

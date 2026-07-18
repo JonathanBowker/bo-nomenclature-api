@@ -114,6 +114,38 @@
           </div>
         </header>
 
+        <section class="reference-card">
+          <div class="reference-topline">
+            <div>
+              <p class="eyebrow">Reference</p>
+              <h3 id="referenceTitle">domainsCollection</h3>
+            </div>
+            <span id="referenceKind" class="kind-badge">Query</span>
+          </div>
+
+          <div class="reference-layout">
+            <article class="reference-block">
+              <h4>Overview</h4>
+              <p id="referenceOverview" class="reference-copy"></p>
+            </article>
+
+            <article class="reference-block">
+              <h4>Arguments</h4>
+              <div id="referenceArguments" class="field-list"></div>
+            </article>
+
+            <article class="reference-block">
+              <h4>Returns</h4>
+              <div id="referenceReturns" class="field-list"></div>
+            </article>
+
+            <article class="reference-block">
+              <h4>Notes</h4>
+              <ul id="referenceNotes" class="note-list"></ul>
+            </article>
+          </div>
+        </section>
+
         <section class="editor-grid">
           <article class="editor-card">
             <div class="card-header">
@@ -135,7 +167,12 @@
         <section class="response-grid">
           <article class="response-card">
             <div class="card-header">
-              <h3>Response</h3>
+              <div>
+                <h3>Response</h3>
+                <p id="responseMeta" class="response-meta">
+                  Showing a captured live sample. Run Query fetches fresh data.
+                </p>
+              </div>
               <button id="copyResponse" class="mini-button" type="button">Copy</button>
             </div>
             <pre id="responseViewer" class="code-block">Run a query to see the response.</pre>
