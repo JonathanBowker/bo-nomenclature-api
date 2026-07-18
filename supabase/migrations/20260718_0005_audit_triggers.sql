@@ -29,7 +29,12 @@ begin
     row_tenant_id,
     tg_table_name,
     row_entity_id,
-    lower(tg_op),
+    case
+      when tg_op = 'INSERT' then 'create'
+      when tg_op = 'UPDATE' then 'update'
+      when tg_op = 'DELETE' then 'delete'
+      else lower(tg_op)
+    end,
     auth.uid(),
     case when tg_op in ('UPDATE', 'DELETE') then to_jsonb(old) else null end,
     case when tg_op in ('INSERT', 'UPDATE') then to_jsonb(new) else null end

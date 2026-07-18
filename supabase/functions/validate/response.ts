@@ -1,4 +1,5 @@
 import type { ValidationCandidate } from "./normalization.ts";
+import { missingApprovalViolation, prohibitedVariantViolation } from "./violations.ts";
 
 export function approvedResponse(match: ValidationCandidate) {
   return {
@@ -22,12 +23,7 @@ export function notApprovedResponse(match: ValidationCandidate) {
     copyrightLine: match.copyright_line,
     ambiguity: [],
     violations: [
-      {
-        span: match.variant_text,
-        ruleId: null,
-        message: `Variant "${match.variant_text}" is not approved for ${match.destination_code}.`,
-        suggestedCanonicalText: match.canonical_text,
-      },
+      prohibitedVariantViolation(match.variant_text, match.destination_code, match.canonical_text),
     ],
     errors: [],
   };
@@ -42,12 +38,7 @@ export function missingApprovalResponse(canonicalText: string, destination: stri
     copyrightLine: null,
     ambiguity: [],
     violations: [
-      {
-        span: canonicalText,
-        ruleId: null,
-        message: `No active approval exists for destination ${destination}.`,
-        suggestedCanonicalText: canonicalText,
-      },
+      missingApprovalViolation(canonicalText, destination),
     ],
     errors: [],
   };

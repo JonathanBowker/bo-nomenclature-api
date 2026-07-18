@@ -43,6 +43,7 @@ for select using (
   )
 );
 
+drop policy if exists variants_manage on public.variants;
 create policy variants_manage on public.variants
 for insert with check (
   exists (
@@ -52,6 +53,7 @@ for insert with check (
   )
 );
 
+drop policy if exists variants_update on public.variants;
 create policy variants_update on public.variants
 for update using (
   exists (
@@ -68,6 +70,7 @@ with check (
   )
 );
 
+drop policy if exists variants_delete on public.variants;
 create policy variants_delete on public.variants
 for delete using (
   exists (
@@ -89,6 +92,7 @@ for select using (
   )
 );
 
+drop policy if exists variant_destinations_manage on public.variant_destinations;
 create policy variant_destinations_manage on public.variant_destinations
 for all using (
   exists (
@@ -119,6 +123,7 @@ for select using (
   )
 );
 
+drop policy if exists examples_manage on public.examples;
 create policy examples_manage on public.examples
 for all using (
   exists (
@@ -145,6 +150,7 @@ for select using (
   )
 );
 
+drop policy if exists rules_manage on public.rules;
 create policy rules_manage on public.rules
 for all using (
   exists (
@@ -173,6 +179,7 @@ for select using (
   )
 );
 
+drop policy if exists rule_destinations_manage on public.rule_destinations;
 create policy rule_destinations_manage on public.rule_destinations
 for all using (
   exists (
@@ -204,6 +211,7 @@ for select using (
   )
 );
 
+drop policy if exists approvals_manage on public.approvals;
 create policy approvals_manage on public.approvals
 for all using (
   exists (

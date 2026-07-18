@@ -98,6 +98,35 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConstraintSetResponse'
+              examples:
+                socialConstraintSet:
+                  value:
+                    domainId: "20000000-0000-0000-0000-000000000004"
+                    destination: "video"
+                    locale: "en-GB"
+                    items:
+                      - termId: "30000000-0000-0000-0000-000000000001"
+                        canonicalText: "PwC"
+                        inheritedFrom: null
+                        overriddenRules: []
+                        variants:
+                          - id: "40000000-0000-0000-0000-000000000001"
+                            variantText: "PwC"
+                            variantType: "approved"
+                            locale: "en-GB"
+                            destinations: ["video"]
+                            copyrightLine: "PwC is a network of firms."
+                          - id: "40000000-0000-0000-0000-000000000002"
+                            variantText: "PricewaterhouseCoopers"
+                            variantType: "prohibited"
+                            locale: "en-GB"
+                            destinations: ["video"]
+                            copyrightLine: null
+                        rules:
+                          - id: "50000000-0000-0000-0000-000000000001"
+                            ruleText: "Use the approved short form on first mention in video content."
+                            enforcementLevel: "hard"
+                            destinations: ["video"]
   /functions/v1/resolved-terms:
     get:
       tags: [Domains]
@@ -114,6 +143,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResolvedTermsResponse'
+              examples:
+                resolvedLeafTerms:
+                  value:
+                    domainId: "20000000-0000-0000-0000-000000000004"
+                    destination: "video"
+                    items:
+                      - termId: "30000000-0000-0000-0000-000000000001"
+                        canonicalText: "PwC"
+                        inheritedFrom: null
+                        overriddenRules: []
+                        variants:
+                          - id: "40000000-0000-0000-0000-000000000001"
+                            variantText: "PwC"
+                            variantType: "approved"
+                            locale: "en-GB"
+                            destinations: ["video"]
+                            copyrightLine: "PwC is a network of firms."
+                        rules:
+                          - id: "50000000-0000-0000-0000-000000000001"
+                            ruleText: "Use the approved short form on first mention in video content."
+                            enforcementLevel: "hard"
+                            destinations: ["video"]
   /rest/v1/domains:
     post:
       tags: [Domains]
@@ -396,11 +447,13 @@ components:
         items:
           type: array
           items:
-            $ref: '#/components/schemas/ResolvedConstraint'
+            $ref: '#/components/schemas/ResolvedTerm'
     ResolvedTermsResponse:
       type: object
       properties:
         domainId:
+          type: string
+        destination:
           type: string
         items:
           type: array

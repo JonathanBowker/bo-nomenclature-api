@@ -89,12 +89,12 @@
 
 ### Implementation for User Story 3
 
-- [ ] T024 [P] [US3] Create SQL views for active constraint-set assembly across terms, variants, rules, and locale scope in `supabase/migrations/20260718_0011_constraint_set_views.sql`
-- [ ] T025 [P] [US3] Implement constraint serialization helpers for AI-governance consumers in `supabase/functions/resolve-constraints/serializer.ts`
-- [ ] T026 [US3] Implement the constraint retrieval Edge Function in `supabase/functions/resolve-constraints/index.ts`
-- [ ] T027 [US3] Add generated-content violation shaping shared by constraint retrieval and validation in `supabase/functions/validate/violations.ts`
-- [ ] T028 [US3] Update contract artifacts with constraint-set examples and downstream consumer expectations in `specs/001-nomenclature-api/contracts/openapi.yaml` and `specs/001-nomenclature-api/contracts/graphql-schema.graphql`
-- [ ] T029 [US3] Add an AI-governance acceptance runner in `tests/e2e/retrieve-constraints-and-validate-output.sh`
+- [X] T024 [P] [US3] Create SQL views for active constraint-set assembly across terms, variants, rules, and locale scope in `supabase/migrations/20260718_0011_constraint_set_views.sql`
+- [X] T025 [P] [US3] Implement constraint serialization helpers for AI-governance consumers in `supabase/functions/resolve-constraints/serializer.ts`
+- [X] T026 [US3] Implement the constraint retrieval Edge Function in `supabase/functions/resolve-constraints/index.ts`
+- [X] T027 [US3] Add generated-content violation shaping shared by constraint retrieval and validation in `supabase/functions/validate/violations.ts`
+- [X] T028 [US3] Update contract artifacts with constraint-set examples and downstream consumer expectations in `specs/001-nomenclature-api/contracts/openapi.yaml` and `specs/001-nomenclature-api/contracts/graphql-schema.graphql`
+- [X] T029 [US3] Add an AI-governance acceptance runner in `tests/e2e/retrieve-constraints-and-validate-output.sh`
 
 **Checkpoint**: User Story 3 should support independent constraint retrieval and generated-content governance on top of US1 foundations
 
@@ -108,11 +108,11 @@
 
 ### Implementation for User Story 4
 
-- [ ] T030 [P] [US4] Add recursive hierarchy traversal and precedence SQL routines in `supabase/migrations/20260718_0012_hierarchy_resolution.sql`
-- [ ] T031 [P] [US4] Create resolved-term and override-explanation views for domain queries in `supabase/migrations/20260718_0013_resolved_term_views.sql`
-- [ ] T032 [US4] Extend the constraint resolution Edge Function to emit inheritance provenance and overridden rule metadata in `supabase/functions/resolve-constraints/index.ts`
-- [ ] T033 [US4] Align resolved-term GraphQL and REST response shapes with override metadata in `specs/001-nomenclature-api/contracts/openapi.yaml` and `specs/001-nomenclature-api/contracts/graphql-schema.graphql`
-- [ ] T034 [US4] Add a hierarchy resolution acceptance runner in `tests/e2e/resolve-inherited-rules.sh`
+- [X] T030 [P] [US4] Add recursive hierarchy traversal and precedence SQL routines in `supabase/migrations/20260718_0012_hierarchy_resolution.sql`
+- [X] T031 [P] [US4] Create resolved-term and override-explanation views for domain queries in `supabase/migrations/20260718_0013_resolved_term_views.sql`
+- [X] T032 [US4] Extend the constraint resolution Edge Function to emit inheritance provenance and overridden rule metadata in `supabase/functions/resolve-constraints/index.ts`
+- [X] T033 [US4] Align resolved-term GraphQL and REST response shapes with override metadata in `specs/001-nomenclature-api/contracts/openapi.yaml` and `specs/001-nomenclature-api/contracts/graphql-schema.graphql`
+- [X] T034 [US4] Add a hierarchy resolution acceptance runner in `tests/e2e/resolve-inherited-rules.sh`
 
 **Checkpoint**: All user stories should now be independently functional, including large-brand hierarchy resolution
 
@@ -122,11 +122,11 @@
 
 **Purpose**: Finish delivery hardening, documentation, and end-to-end validation across all stories
 
-- [ ] T035 [P] Document local Supabase startup, migration, function serving, and acceptance execution in `README.md`
-- [ ] T036 [P] Add contract verification scripts for REST and GraphQL artifacts in `tests/contract/verify-openapi.sh` and `tests/contract/verify-graphql-schema.sh`
-- [ ] T037 Add database acceptance verification for audit coverage, approval expiry, and RLS isolation in `tests/database/acceptance-checks.sql`
-- [ ] T038 Add Edge Function smoke checks for validate, resolve-constraints, and record-approval in `tests/edge/run-smoke-tests.sh`
-- [ ] T039 Run the full quickstart validation flow and capture any required updates in `specs/001-nomenclature-api/quickstart.md`
+- [X] T035 [P] Document local Supabase startup, migration, function serving, and acceptance execution in `README.md`
+- [X] T036 [P] Add contract verification scripts for REST and GraphQL artifacts in `tests/contract/verify-openapi.sh` and `tests/contract/verify-graphql-schema.sh`
+- [X] T037 Add database acceptance verification for audit coverage, approval expiry, and RLS isolation in `tests/database/acceptance-checks.sql`
+- [X] T038 Add Edge Function smoke checks for validate, resolve-constraints, and record-approval in `tests/edge/run-smoke-tests.sh`
+- [X] T039 Run the full quickstart validation flow and capture any required updates in `specs/001-nomenclature-api/quickstart.md`
 
 ---
 

@@ -19,10 +19,10 @@ This guide defines the validation scenarios that must work end to end for the fi
 ## Setup
 
 1. Install project dependencies.
-2. Start the local Supabase stack.
-3. Apply schema migrations.
-4. Deploy or serve Edge Functions locally.
-5. Seed the reference dataset.
+2. Start the local Supabase stack with `supabase start`.
+3. Apply schema migrations and seed data with `supabase db reset`.
+4. Serve the functions `validate`, `record-approval`, and `resolve-constraints` with `supabase functions serve ... --env-file .env`.
+5. Confirm the reference dataset is present.
 
 Expected result: local Supabase REST, GraphQL, and Edge Function endpoints are reachable and the reference dataset is queryable.
 
@@ -33,7 +33,7 @@ Expected result: local Supabase REST, GraphQL, and Edge Function endpoints are r
 3. Confirm the response includes the approved canonical text and any first-mention copyright guidance.
 
 Reference contract:
-- REST: `POST /v1/validate`
+- REST: `POST /functions/v1/validate`
 - GraphQL: `validateCandidate`
 
 Expected result: the request succeeds and no violation payload is returned.
@@ -45,7 +45,7 @@ Expected result: the request succeeds and no violation payload is returned.
 3. Confirm the response identifies the matched prohibited variant and returns the approved correction.
 
 Reference contract:
-- REST: `POST /v1/validate`
+- REST: `POST /functions/v1/validate`
 - GraphQL: `validateCandidate`
 
 Expected result: the request succeeds and the correction data matches the seeded approved term.
@@ -65,7 +65,7 @@ Expected result: destination-specific approval is enforced independently of term
 3. Confirm a conflicting leaf-level rule overrides the ancestor rule and that the override is visible in the response.
 
 Reference contract:
-- REST: `GET /v1/domains/{domainId}/resolved-terms`
+- REST: `GET /functions/v1/resolved-terms`
 - GraphQL: `resolvedTerms`
 
 Expected result: effective rules are deterministic and explainable.
@@ -78,7 +78,7 @@ Expected result: effective rules are deterministic and explainable.
 4. Confirm change history includes the term mutation and the approval event.
 
 Reference contract:
-- REST: `POST /v1/terms`, `PATCH /v1/terms/{termId}`, `POST /v1/terms/{termId}/approvals`, `GET /v1/audit`
+- REST: `POST /rest/v1/terms`, `PATCH /rest/v1/terms?id=eq.<term-id>`, `POST /functions/v1/record-approval`, `GET /rest/v1/audit_entries`
 - GraphQL: `createTerm`, `updateTerm`, `recordApproval`, `auditEntries`
 
 Expected result: all accepted mutations are attributable and retrievable.
@@ -90,14 +90,14 @@ Expected result: all accepted mutations are attributable and retrievable.
 3. Use that response as the basis for a generated validation pass.
 
 Reference contract:
-- REST: `GET /v1/domains/{domainId}/constraints`
+- REST: `GET /functions/v1/resolve-constraints`
 - GraphQL: `constraintSet`
 
 Expected result: downstream systems receive all required nomenclature guidance without additional lookups.
 
 ## Acceptance Commands
 
-The exact executable commands will be added during implementation, but the validation flow must cover:
+The validation flow is expected to cover:
 
 1. Local Supabase startup
 2. Database migration
@@ -105,6 +105,22 @@ The exact executable commands will be added during implementation, but the valid
 4. Seed-data load
 5. Contract tests
 6. End-to-end tests
+
+Suggested commands:
+
+```bash
+supabase start
+supabase db reset
+supabase functions serve validate --env-file .env
+supabase functions serve record-approval --env-file .env
+supabase functions serve resolve-constraints --env-file .env
+tests/contract/verify-openapi.sh
+tests/contract/verify-graphql-schema.sh
+tests/e2e/validate-approved-wording.sh
+tests/e2e/curate-and-approve-term.sh
+tests/e2e/retrieve-constraints-and-validate-output.sh
+tests/e2e/resolve-inherited-rules.sh
+```
 
 ## Exit Criteria
 
