@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GraphQL Explorer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <p class="eyebrow">bo-nomenclature-api</p>
+          <h1>GraphQL Explorer</h1>
+          <p class="subtle">
+            Interactive explorer for the live Supabase <code>pg_graphql</code> surface.
+          </p>
+        </div>
+
+        <section class="panel">
+          <h2>Connection</h2>
+          <label class="field">
+            <span>Endpoint</span>
+            <input
+              id="endpoint"
+              type="url"
+              value="https://elcfkzjgaejisbmbempp.supabase.co/graphql/v1"
+              spellcheck="false"
+            />
+          </label>
+          <label class="field">
+            <span>API key</span>
+            <input id="apiKey" type="password" placeholder="Paste anon or service-role key" />
+          </label>
+          <label class="field">
+            <span>Bearer token</span>
+            <input id="bearerToken" type="password" placeholder="Defaults to API key if blank" />
+          </label>
+          <div class="button-row">
+            <button id="saveConnection" class="button button-secondary" type="button">
+              Save Locally
+            </button>
+            <button id="runQuery" class="button button-primary" type="button">Run Query</button>
+          </div>
+          <p class="hint">
+            Credentials stay in your browser <code>localStorage</code>. Nothing is embedded in the
+            page source.
+          </p>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <h2>Examples</h2>
+            <button id="loadIntrospection" class="mini-button" type="button">
+              Load Introspection
+            </button>
+          </div>
+          <nav class="example-list" aria-label="Example queries">
+            <button class="example-item is-active" data-example="domains" type="button">
+              Domains collection
+            </button>
+            <button class="example-item" data-example="hotelTerm" type="button">
+              Imported hotel term
+            </button>
+            <button class="example-item" data-example="wdwTerms" type="button">
+              Walt Disney World sample terms
+            </button>
+            <button class="example-item" data-example="auditTrail" type="button">
+              Audit trail
+            </button>
+            <button class="example-item" data-example="approvalState" type="button">
+              Approval state function
+            </button>
+          </nav>
+        </section>
+
+        <section class="panel">
+          <h2>Useful IDs</h2>
+          <dl class="meta-list">
+            <div>
+              <dt>Disney Destinations</dt>
+              <dd><code>72000000-0000-0000-0000-000000000001</code></dd>
+            </div>
+            <div>
+              <dt>Disneyland Paris</dt>
+              <dd><code>72000000-0000-0000-0000-000000000003</code></dd>
+            </div>
+            <div>
+              <dt>WDW</dt>
+              <dd><code>72000000-0000-0000-0000-000000000004</code></dd>
+            </div>
+            <div>
+              <dt>Hotel term</dt>
+              <dd><code>12b8e98b-7593-5b51-b8cc-3c9084cbcb32</code></dd>
+            </div>
+          </dl>
+        </section>
+      </aside>
+
+      <main class="workspace">
+        <header class="workspace-header">
+          <div>
+            <p class="eyebrow">Live Request</p>
+            <h2 id="activeExampleTitle">Domains collection</h2>
+          </div>
+          <div class="status-wrap">
+            <span id="statusBadge" class="status-badge idle">Idle</span>
+          </div>
+        </header>
+
+        <section class="editor-grid">
+          <article class="editor-card">
+            <div class="card-header">
+              <h3>Query</h3>
+              <button id="copyQuery" class="mini-button" type="button">Copy</button>
+            </div>
+            <textarea id="queryEditor" spellcheck="false"></textarea>
+          </article>
+
+          <article class="editor-card">
+            <div class="card-header">
+              <h3>Variables</h3>
+              <button id="formatVariables" class="mini-button" type="button">Format</button>
+            </div>
+            <textarea id="variablesEditor" spellcheck="false">{}</textarea>
+          </article>
+        </section>
+
+        <section class="response-grid">
+          <article class="response-card">
+            <div class="card-header">
+              <h3>Response</h3>
+              <button id="copyResponse" class="mini-button" type="button">Copy</button>
+            </div>
+            <pre id="responseViewer" class="code-block">Run a query to see the response.</pre>
+          </article>
+
+          <article class="response-card">
+            <div class="card-header">
+              <h3>Request Preview</h3>
+            </div>
+            <pre id="requestViewer" class="code-block">{
+  "query": "",
+  "variables": {}
+}</pre>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
