@@ -1,0 +1,24 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+.vscode/
+.idea/
+*.log
+*.tmp
+*.swp
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+
+# Supabase local artifacts
+.supabase/
+supabase/.branches/
+supabase/.temp/
+
+# Local build and dependency artifacts
+node_modules/
+dist/
+build/

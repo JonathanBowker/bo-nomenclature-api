@@ -1,0 +1,178 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Query {
+  domain(id: ID!): Domain
+  resolvedTerms(domainId: ID!, destination: String!, locale: String): [ResolvedTerm!]!
+  constraintSet(domainId: ID!, destination: String!, locale: String): ConstraintSet!
+  term(id: ID!): Term
+  auditEntries(entityType: String, entityId: ID, limit: Int = 50): [AuditEntry!]!
+}
+
+type Mutation {
+  createDomain(input: CreateDomainInput!): Domain!
+  createTerm(input: CreateTermInput!): Term!
+  updateTerm(id: ID!, input: UpdateTermInput!): Term!
+  deleteTerm(id: ID!): DeleteTermResult!
+  recordApproval(termId: ID!, input: RecordApprovalInput!): Approval!
+  validateCandidate(input: ValidationInput!): ValidationResult!
+}
+
+type Domain {
+  id: ID!
+  parentId: ID
+  name: String!
+  slug: String!
+  domainType: String!
+  status: String!
+  children: [Domain!]!
+}
+
+type Term {
+  id: ID!
+  domainId: ID!
+  canonicalText: String!
+  category: String!
+  approvalState: String!
+  sourceReference: String
+  notes: String
+  variants: [Variant!]!
+  examples: [Example!]!
+  rules: [Rule!]!
+  approvals: [Approval!]!
+}
+
+type Variant {
+  id: ID!
+  variantText: String!
+  variantType: String!
+  locale: String
+  destinations: [String!]!
+  copyrightLine: String
+}
+
+type Example {
+  id: ID!
+  exampleType: String!
+  caption: String
+  contentText: String
+  assetUrl: String
+  destination: String
+}
+
+type Rule {
+  id: ID!
+  ruleText: String!
+  enforcementLevel: String!
+  destinations: [String!]!
+}
+
+type Approval {
+  id: ID!
+  destination: String!
+  status: String!
+  comment: String
+  effectiveAt: String
+  expiresAt: String
+  actorId: ID!
+  createdAt: String!
+}
+
+type AuditEntry {
+  id: ID!
+  entityType: String!
+  entityId: ID!
+  action: String!
+  actorId: ID!
+  occurredAt: String!
+}
+
+type ResolvedTerm {
+  termId: ID!
+  canonicalText: String!
+  inheritedFrom: ID
+  overriddenRules: [String!]!
+  variants: [Variant!]!
+  rules: [Rule!]!
+}
+
+type ConstraintSet {
+  domainId: ID!
+  destination: String!
+  locale: String
+  items: [ResolvedTerm!]!
+}
+
+type DeleteTermResult {
+  success: Boolean!
+}
+
+type ValidationResult {
+  outcome: ValidationOutcome!
+  candidate: String!
+  destination: String!
+  canonicalText: String
+  matchedTermId: ID
+  prohibitedVariant: String
+  copyrightLine: String
+  ambiguity: [AmbiguityCandidate!]
+  violations: [Violation!]
+  errors: [String!]
+}
+
+type AmbiguityCandidate {
+  termId: ID!
+  canonicalText: String!
+  domainId: ID!
+}
+
+type Violation {
+  span: String
+  ruleId: ID
+  message: String!
+  suggestedCanonicalText: String
+}
+
+enum ValidationOutcome {
+  approved
+  not_approved
+  ambiguous
+  evaluation_error
+}
+
+input CreateDomainInput {
+  parentId: ID
+  name: String!
+  slug: String!
+  domainType: String!
+}
+
+input CreateTermInput {
+  domainId: ID!
+  canonicalText: String!
+  category: String!
+  sourceReference: String
+}
+
+input UpdateTermInput {
+  canonicalText: String
+  category: String
+  notes: String
+}
+
+input RecordApprovalInput {
+  destination: String!
+  status: String!
+  comment: String
+  effectiveAt: String
+  expiresAt: String
+}
+
+input ValidationInput {
+  domainId: ID!
+  destination: String!
+  locale: String
+  candidate: String!
+}

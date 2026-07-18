@@ -1,0 +1,644 @@
+openapi: 3.1.0
+info:
+  title: Nomenclature API
+  version: 0.1.0
+  description: >
+    Contract for brand nomenclature validation, curation, approval history,
+    hierarchical resolution, and AI-governance constraint retrieval on Supabase.
+servers:
+  - url: https://{project-ref}.supabase.co
+    variables:
+      project-ref:
+        default: local-project
+security:
+  - bearerAuth: []
+tags:
+  - name: Validation
+  - name: Constraints
+  - name: Domains
+  - name: Terms
+  - name: Approvals
+  - name: Audit
+paths:
+  /functions/v1/validate:
+    post:
+      tags: [Validation]
+      summary: Validate a candidate string for a destination and scope
+      operationId: validateCandidate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidationRequest'
+            examples:
+              approvedCandidate:
+                value:
+                  domainId: "20000000-0000-0000-0000-000000000004"
+                  destination: "video"
+                  candidate: "PwC"
+              prohibitedCandidate:
+                value:
+                  domainId: "20000000-0000-0000-0000-000000000004"
+                  destination: "video"
+                  candidate: "PricewaterhouseCoopers"
+      responses:
+        '200':
+          description: Validation completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationResponse'
+              examples:
+                approvedResponse:
+                  value:
+                    outcome: approved
+                    candidate: PwC
+                    destination: video
+                    matchedTermId: "30000000-0000-0000-0000-000000000001"
+                    canonicalText: PwC
+                    copyrightLine: "PwC is a network of firms."
+                    ambiguity: []
+                    violations: []
+                    errors: []
+                prohibitedResponse:
+                  value:
+                    outcome: not_approved
+                    candidate: PricewaterhouseCoopers
+                    destination: video
+                    matchedTermId: "30000000-0000-0000-0000-000000000001"
+                    canonicalText: PwC
+                    prohibitedVariant: PricewaterhouseCoopers
+                    ambiguity: []
+                    violations:
+                      - span: PricewaterhouseCoopers
+                        ruleId: null
+                        message: Variant "PricewaterhouseCoopers" is not approved for video.
+                        suggestedCanonicalText: PwC
+                    errors: []
+        '400':
+          description: Invalid request payload
+        '401':
+          description: Authentication required
+        '403':
+          description: Caller is not entitled to the requested scope
+  /functions/v1/resolve-constraints:
+    get:
+      tags: [Constraints]
+      summary: Retrieve the active constraint set for a domain and destination
+      operationId: getDomainConstraints
+      parameters:
+        - $ref: '#/components/parameters/DomainIdQuery'
+        - $ref: '#/components/parameters/DestinationCode'
+        - $ref: '#/components/parameters/LocaleCode'
+      responses:
+        '200':
+          description: Resolved constraints
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConstraintSetResponse'
+  /functions/v1/resolved-terms:
+    get:
+      tags: [Domains]
+      summary: Resolve effective terms and inherited rules for a domain
+      operationId: getResolvedTerms
+      parameters:
+        - $ref: '#/components/parameters/DomainIdQuery'
+        - $ref: '#/components/parameters/DestinationCode'
+        - $ref: '#/components/parameters/LocaleCode'
+      responses:
+        '200':
+          description: Resolved terms for the requested scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResolvedTermsResponse'
+  /rest/v1/domains:
+    post:
+      tags: [Domains]
+      summary: Create a domain through Supabase REST
+      operationId: createDomain
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDomainRequest'
+            examples:
+              createLeafDomain:
+                value:
+                  parentId: "20000000-0000-0000-0000-000000000003"
+                  name: "Sky Lounge"
+                  slug: "sky-lounge"
+                  domainType: "venue"
+      responses:
+        '201':
+          description: Domain created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Domain'
+  /rest/v1/terms:
+    post:
+      tags: [Terms]
+      summary: Create a term through Supabase REST
+      operationId: createTerm
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTermRequest'
+            examples:
+              createDraftTerm:
+                value:
+                  domainId: "20000000-0000-0000-0000-000000000004"
+                  canonicalText: "Brand Oracle Concierge"
+                  category: "service_name"
+                  sourceReference: "guideline:concierge-name"
+      responses:
+        '201':
+          description: Term created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Term'
+              examples:
+                createdTerm:
+                  value:
+                    id: "30000000-0000-0000-0000-000000000099"
+                    domainId: "20000000-0000-0000-0000-000000000004"
+                    canonicalText: "Brand Oracle Concierge"
+                    category: "service_name"
+                    approvalState: "draft"
+                    sourceReference: "guideline:concierge-name"
+    get:
+      tags: [Terms]
+      summary: Get term rows through Supabase REST filters
+      operationId: getTerm
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Term details
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Term'
+    patch:
+      tags: [Terms]
+      summary: Update a term through Supabase REST filters
+      operationId: updateTerm
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTermRequest'
+            examples:
+              addNotes:
+                value:
+                  notes: "Approved wording prepared for social launch."
+      responses:
+        '200':
+          description: Term updated
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Term'
+    delete:
+      tags: [Terms]
+      summary: Remove a term from active use through Supabase REST filters
+      operationId: deleteTerm
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Term removed
+  /functions/v1/record-approval:
+    post:
+      tags: [Approvals]
+      summary: Record an approval decision for a term and destination
+      operationId: createApproval
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateApprovalRequest'
+            examples:
+              approveSocial:
+                value:
+                  termId: "30000000-0000-0000-0000-000000000099"
+                  destination: "social"
+                  status: "approved"
+                  comment: "Approved for launch social assets"
+      responses:
+        '201':
+          description: Approval recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Approval'
+              examples:
+                approvalRecorded:
+                  value:
+                    id: "60000000-0000-0000-0000-000000000099"
+                    destination: "social"
+                    status: "approved"
+                    comment: "Approved for launch social assets"
+                    effectiveAt: "2026-07-18T12:00:00Z"
+                    expiresAt: null
+                    actorId: "00000000-0000-0000-0000-000000000001"
+                    createdAt: "2026-07-18T12:00:00Z"
+  /rest/v1/audit_entries:
+    get:
+      tags: [Audit]
+      summary: Search immutable audit history
+      operationId: searchAuditEntries
+      parameters:
+        - in: query
+          name: entityType
+          schema:
+            type: string
+        - in: query
+          name: entityId
+          schema:
+            type: string
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+      responses:
+        '200':
+          description: Audit entries
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AuditEntry'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    DomainId:
+      in: path
+      name: domainId
+      required: true
+      schema:
+        type: string
+    TermId:
+      in: path
+      name: termId
+      required: true
+      schema:
+        type: string
+    DomainIdQuery:
+      in: query
+      name: domainId
+      required: true
+      schema:
+        type: string
+    DestinationCode:
+      in: query
+      name: destination
+      required: true
+      schema:
+        type: string
+    LocaleCode:
+      in: query
+      name: locale
+      required: false
+      schema:
+        type: string
+  schemas:
+    ValidationRequest:
+      type: object
+      required: [domainId, destination, candidate]
+      properties:
+        domainId:
+          type: string
+        destination:
+          type: string
+        locale:
+          type: string
+        candidate:
+          type: string
+    ValidationResponse:
+      type: object
+      required: [outcome, candidate, destination]
+      properties:
+        outcome:
+          type: string
+          enum: [approved, not_approved, ambiguous, evaluation_error]
+        candidate:
+          type: string
+        destination:
+          type: string
+        matchedTermId:
+          type: string
+        canonicalText:
+          type: string
+        prohibitedVariant:
+          type: string
+        copyrightLine:
+          type: string
+        ambiguity:
+          type: array
+          items:
+            $ref: '#/components/schemas/AmbiguityCandidate'
+        violations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Violation'
+        errors:
+          type: array
+          items:
+            type: string
+    ConstraintSetResponse:
+      type: object
+      required: [domainId, destination, items]
+      properties:
+        domainId:
+          type: string
+        destination:
+          type: string
+        locale:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResolvedConstraint'
+    ResolvedTermsResponse:
+      type: object
+      properties:
+        domainId:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResolvedTerm'
+    CreateDomainRequest:
+      type: object
+      required: [name, slug, domainType]
+      properties:
+        parentId:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        domainType:
+          type: string
+    CreateTermRequest:
+      type: object
+      required: [domainId, canonicalText, category]
+      properties:
+        domainId:
+          type: string
+        canonicalText:
+          type: string
+        category:
+          type: string
+        sourceReference:
+          type: string
+    UpdateTermRequest:
+      type: object
+      properties:
+        canonicalText:
+          type: string
+        category:
+          type: string
+        notes:
+          type: string
+    CreateApprovalRequest:
+      type: object
+      required: [termId, destination, status]
+      properties:
+        termId:
+          type: string
+        destination:
+          type: string
+        status:
+          type: string
+          enum: [approved, revoked]
+        comment:
+          type: string
+        effectiveAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+    Domain:
+      type: object
+      required: [id, name, slug, domainType]
+      properties:
+        id:
+          type: string
+        parentId:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        domainType:
+          type: string
+        status:
+          type: string
+    Term:
+      type: object
+      required: [id, domainId, canonicalText, category]
+      properties:
+        id:
+          type: string
+        domainId:
+          type: string
+        canonicalText:
+          type: string
+        category:
+          type: string
+        approvalState:
+          type: string
+        sourceReference:
+          type: string
+        variants:
+          type: array
+          items:
+            $ref: '#/components/schemas/Variant'
+        examples:
+          type: array
+          items:
+            $ref: '#/components/schemas/Example'
+        rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/Rule'
+    Variant:
+      type: object
+      required: [id, variantText, variantType]
+      properties:
+        id:
+          type: string
+        variantText:
+          type: string
+        variantType:
+          type: string
+        locale:
+          type: string
+        destinations:
+          type: array
+          items:
+            type: string
+        copyrightLine:
+          type: string
+    Example:
+      type: object
+      required: [id, exampleType]
+      properties:
+        id:
+          type: string
+        exampleType:
+          type: string
+        caption:
+          type: string
+        contentText:
+          type: string
+        assetUrl:
+          type: string
+    Rule:
+      type: object
+      required: [id, ruleText, enforcementLevel]
+      properties:
+        id:
+          type: string
+        ruleText:
+          type: string
+        enforcementLevel:
+          type: string
+        destinations:
+          type: array
+          items:
+            type: string
+    Approval:
+      type: object
+      required: [id, destination, status, actorId, createdAt]
+      properties:
+        id:
+          type: string
+        destination:
+          type: string
+        status:
+          type: string
+        comment:
+          type: string
+        effectiveAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+        actorId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    AuditEntry:
+      type: object
+      required: [id, entityType, entityId, action, actorId, occurredAt]
+      properties:
+        id:
+          type: string
+        entityType:
+          type: string
+        entityId:
+          type: string
+        action:
+          type: string
+        actorId:
+          type: string
+        occurredAt:
+          type: string
+          format: date-time
+        beforeSnapshot:
+          type: object
+          additionalProperties: true
+        afterSnapshot:
+          type: object
+          additionalProperties: true
+    ResolvedConstraint:
+      type: object
+      properties:
+        termId:
+          type: string
+        canonicalText:
+          type: string
+        variants:
+          type: array
+          items:
+            $ref: '#/components/schemas/Variant'
+        rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/Rule'
+    ResolvedTerm:
+      type: object
+      properties:
+        termId:
+          type: string
+        canonicalText:
+          type: string
+        inheritedFrom:
+          type: string
+        overriddenRules:
+          type: array
+          items:
+            type: string
+    AmbiguityCandidate:
+      type: object
+      properties:
+        termId:
+          type: string
+        canonicalText:
+          type: string
+        domainId:
+          type: string
+    Violation:
+      type: object
+      properties:
+        span:
+          type: string
+        ruleId:
+          type: string
+        message:
+          type: string
+        suggestedCanonicalText:
+          type: string
